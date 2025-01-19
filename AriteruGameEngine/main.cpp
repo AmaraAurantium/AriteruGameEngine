@@ -23,7 +23,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Game Engine", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Ariteru", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -39,8 +39,8 @@ int main()
 		return -1;
 	}
 
-	Shader shader("./shaders/vertex.vs", "./shaders/frag.fs");
-	Shader shader1("./shaders/vertex.vs", "./shaders/frag.fs");
+	Shader shader("D:/Workspace/AriteruGameEngine/x64/Debug/shaders/vertex.vs", "D:/Workspace/AriteruGameEngine/x64/Debug/shaders/frag.fs");
+	Shader shader1("D:/Workspace/AriteruGameEngine/x64/Debug/shaders/vertex.vs", "D:/Workspace/AriteruGameEngine/x64/Debug/shaders/frag.fs");
 
 	float vertices[] = {
 		 0.5f,  0.5f, 0.0f,  // top right
@@ -82,7 +82,7 @@ int main()
 	{
 		processInput(window);
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(1.0f, 0.85f, 0.8f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shader.GetShaderProgramID());
