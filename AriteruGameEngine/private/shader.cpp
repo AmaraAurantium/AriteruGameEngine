@@ -12,17 +12,17 @@ Shader::Shader(const string vertexPath, const string fragmentPath)
 	vShaderFile.open(vertexPath);
 	fShaderFile.open(fragmentPath);
 
-	std::stringstream vShadeStream, fShaderSteam;
+	std::stringstream vShaderStream, fShaderStream;
 
-	vShadeStream << vShaderFile.rdbuf();
-	fShaderSteam << fShaderFile.rdbuf();
+	vShaderStream << vShaderFile.rdbuf();
+	fShaderStream << fShaderFile.rdbuf();
 
 	// close opened files
 	vShaderFile.close();
 	fShaderFile.close();
 
-	std::string vertexCode = vShadeStream.str();
-	std::string fragmentCode = fShaderSteam.str();
+	std::string vertexCode = vShaderStream.str();
+	std::string fragmentCode = fShaderStream.str();
 
 	const char* vShaderCode = vertexCode.c_str();
 	const char* fShaderCode = fragmentCode.c_str();
