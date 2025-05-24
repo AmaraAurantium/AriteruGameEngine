@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\dev\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\dev\include;$(ProjectDir)/public;$(IncludePath)</IncludePath>
     <LibraryPath>D:\dev\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\dev\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\dev\include;$(ProjectDir)/public;$(IncludePath)</IncludePath>
     <LibraryPath>D:\dev\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -140,11 +140,14 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="private\camera.cpp" />
+    <ClCompile Include="private\mesh.cpp" />
+    <ClCompile Include="private\model.cpp" />
     <ClCompile Include="private\shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="model.h" />
+    <ClInclude Include="public\camera.h" />
+    <ClInclude Include="public\mesh.h" />
+    <ClInclude Include="public\model.h" />
     <ClInclude Include="public\shader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
