@@ -7,9 +7,6 @@ uniform bool hasTexture;             // Flag to check if model has textures
 
 void main()
 {
-    if (hasTexture) {
-        FragColor = texture(texture_diffuse1, TexCoords);
-    } else {
-        FragColor = vec4(1.0f, 0.777f, 0.545f, 1.0f);  // Your peach fallback
-    }
+    vec3 baseColor = texture(texture_diffuse1,TexCoords).rgb;
+    FragColor = vec4(baseColor,1.0f);
 }

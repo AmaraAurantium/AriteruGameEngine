@@ -22,7 +22,7 @@ const unsigned int SCR_HEIGHT = 600;
 
 bool showRight = false;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 40.0f, 80.0f));
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
