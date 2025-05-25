@@ -58,8 +58,9 @@ int main()
 		return -1;
 	}
 
-	Shader shader("D:/Workspace/AriteruGameEngine/x64/Debug/shaders/vertex.vs", "D:/Workspace/AriteruGameEngine/x64/Debug/shaders/frag.fs");
-	Model model("D:/Workspace/AriteruGameEngine/x64/Debug/models/ara/ara.fbx");
+	Shader shader("D:/Workspace/AriteruGameEngine/shaders/vertex.vs", "D:/Workspace/AriteruGameEngine/shaders/frag.fs");
+
+	Model model("D:/Workspace/AriteruGameEngine/models/ara/ara.fbx");
 
 	//std::cout << "Model loaded with " << model.meshes.size() << " meshes" << std::endl;
 	//if (model.meshes.empty()) {
