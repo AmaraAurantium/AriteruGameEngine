@@ -17,8 +17,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 900;
 
 bool showRight = false;
 
@@ -68,10 +68,15 @@ int main()
 	//	return -1;
 	//}
 
-	glUseProgram(shader.GetShaderProgramID());
-	glm::mat4 projection = glm::perspective(glm::radians(120.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 500.0f);
-	unsigned int projectionLoc = glGetUniformLocation(shader.GetShaderProgramID(), "projection");
-	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+ 
+
+	glEnable(GL_DEPTH_TEST);
+	// Set matrices
+	shader.use();
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 500.0f);
+	glm::mat4 view = camera.GetViewMatrix();
+	shader.setMat4("projection", projection);
+	shader.setMat4("view", view);
 
 	// rendering loop
 	while (!glfwWindowShouldClose(window))
@@ -86,7 +91,7 @@ int main()
 		{
 			camera.ShowInfo();
 		}
-
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		//glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
@@ -96,20 +101,18 @@ int main()
 		//unsigned int viewLoc = glGetUniformLocation(shader.GetShaderProgramID(), "view");
 		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader.use();  // Activate shader
 
-		// Set matrices
-		glm::mat4 projection = glm::perspective(glm::radians(120.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 500.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		shader.setMat4("projection", projection);
-		shader.setMat4("view", view);
 
 		// Render model
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f)); // Adjust scale if needed
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 25.0f, 0.0f));
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(100.0f));
+
+
 		shader.setMat4("model", modelMatrix);
 
 		model.Draw(shader);
