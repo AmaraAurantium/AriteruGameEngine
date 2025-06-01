@@ -60,7 +60,7 @@ int main()
 
 	Shader shader("D:/Workspace/AriteruGameEngine/shaders/vertex.vs", "D:/Workspace/AriteruGameEngine/shaders/frag.fs");
 
-	Model model("D:/Workspace/AriteruGameEngine/models/ara/ara.obj");
+	Model model("D:/Workspace/AriteruGameEngine/models/ara/ara.fbx");
 
 	//std::cout << "Model loaded with " << model.meshes.size() << " meshes" << std::endl;
 	//if (model.meshes.empty()) {
@@ -108,7 +108,7 @@ int main()
 		// Render model
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 25.0f, 0.0f));
-		//modelMatrix = glm::rotate(modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(100.0f));
 
 

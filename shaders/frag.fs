@@ -9,8 +9,10 @@ uniform bool hasTexture;             // Flag to check if model has textures
 
 void main()
 {
-    vec3 lightposition = vec3(100.0f, 100.0f, 0.0f);
-    float lightintensity = dot(Normal,normalize(lightposition-pointworldposition))/2.0f+0.5f;
+    vec3 lightposition = vec3(500.0f, 500.0f, 0.0f);
+    vec3 normal = normalize(Normal);
+    vec3 lightdir = normalize(lightposition-pointworldposition);
+    float lightintensity = dot(normal, lightdir)* 0.5f + 0.5f;
     vec3 baseColor = texture(texture_diffuse1,TexCoords).rgb * lightintensity;
 
     FragColor = vec4(baseColor,1.0f);
