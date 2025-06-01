@@ -12,7 +12,9 @@ enum Camera_Movement
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT
+    RIGHT,
+    UP,
+    DOWN
 };
 
 const float YAW = -90.0F;
@@ -39,17 +41,9 @@ public:
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
         float yaw = YAW,
-        float pitch = PITCH)
-        : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED),
-        MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
-    {
-        Position = position;
-        WorldUp = up;
-        Yaw = yaw;
-        Pitch = pitch;
+        float pitch = PITCH);
 
-        UpdateCameraVectors();
-    }
+ 
 
     Camera(float posX,
         float posY,
@@ -93,6 +87,10 @@ public:
             Position -= Right * velocity;
         if (direction == RIGHT)
             Position += Right * velocity;
+        if (direction == UP)
+            Position += Up * velocity;
+        if (direction == DOWN)
+            Position -= Up * velocity;
     }
 
     // processes input received from a mouse input system. Expects the offset

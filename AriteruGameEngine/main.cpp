@@ -60,7 +60,7 @@ int main()
 
 	Shader shader("D:/Workspace/AriteruGameEngine/shaders/vertex.vs", "D:/Workspace/AriteruGameEngine/shaders/frag.fs");
 
-	Model model("D:/Workspace/AriteruGameEngine/models/ara/ara.fbx");
+	Model model("D:/Workspace/AriteruGameEngine/models/ara/ara.obj");
 
 	//std::cout << "Model loaded with " << model.meshes.size() << " meshes" << std::endl;
 	//if (model.meshes.empty()) {
@@ -93,13 +93,12 @@ int main()
 		}
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		//glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
-		//glUseProgram(shader.GetShaderProgramID());
+		glUseProgram(shader.GetShaderProgramID());
 
-		//glm::mat4 view = camera.GetViewMatrix();
-		//unsigned int viewLoc = glGetUniformLocation(shader.GetShaderProgramID(), "view");
-		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		glm::mat4 view = camera.GetViewMatrix();
+		unsigned int viewLoc = glGetUniformLocation(shader.GetShaderProgramID(), "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -109,7 +108,7 @@ int main()
 		// Render model
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 25.0f, 0.0f));
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		//modelMatrix = glm::rotate(modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(100.0f));
 
 
@@ -146,6 +145,10 @@ void processInput(GLFWwindow* window)
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		camera.ProcessKeyboard(UP, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		camera.ProcessKeyboard(DOWN, deltaTime);
 
 	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
 		bShowCameraInfo = true;

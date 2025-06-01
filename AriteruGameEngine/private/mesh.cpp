@@ -64,7 +64,7 @@ void Mesh::Draw(Shader& shader, const int num)
 		else if (name == "texture_normal")
 			number = std::to_string(normalNr++);
 
-		glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
+		glUniform1i(glGetUniformLocation(shader.GetShaderProgramID(), (name + number).c_str()), i);
 		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 	}
 
