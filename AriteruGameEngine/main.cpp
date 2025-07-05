@@ -1,4 +1,6 @@
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif
  
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -12,22 +14,53 @@
 #include "public/shader.h"
 #include "public/camera.h"
 #include "public/model.h"
+#include "public/light.h"
+#include "public/utils.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+
+
+using namespace std;
+
 const unsigned int SCR_WIDTH = 1200;
 const unsigned int SCR_HEIGHT = 900;
 
-bool showRight = false;
+const float NEAR_PLANE = 1.0f;
+const float FAR_PLANE = 500.0f;
+
+int SHADOW_WIDTH = 4096;
+int SHADOW_HEIGHT = 4096;
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void processInput(GLFWwindow* window);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+
+bool saveScreen = false;
+void save_screen(int width, int height);
 
 Camera camera(glm::vec3(0.0f, 40.0f, 80.0f));
+
+glm::vec3 lightColor(1.0f);
+glm::vec3 lightPosition(20.0f, 20.0f, -55.0f);
+Light sun(lightPosition, glm::vec3(0), 10.0f, 100.0f, lightColor, ELightType::LT_DIRECTION, SHADOW_WIDTH, SHADOW_HEIGHT);
+
+float lastX = SCR_WIDTH / 2.0f;
+float lastY = SCR_HEIGHT / 2.0f;
+bool firstMouse = true;
+
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 bool bShowCameraInfo = false;
+bool DebugPanelEnabled = false;
+bool ShiftPressed = false;
+
+#define SHADOW_MAPPING_ENABLE
+#define SKYBOX_ENABLE
 
 void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -62,11 +95,14 @@ int main()
 
 	Model model("D:/Workspace/AriteruGameEngine/models/ara/ara.fbx");
 
-	//std::cout << "Model loaded with " << model.meshes.size() << " meshes" << std::endl;
-	//if (model.meshes.empty()) {
-	//	std::cerr << "ERROR: Failed to load model or model contains no meshes!" << std::endl;
-	//	return -1;
-	//}
+#ifdef SHADOW_MAPPING_ENABLE
+	Shader shader("D:/Workspace/AriteruGameEngine/shaders/shadow_mapping.fs");
+#else
+	Shader shader("D:/Workspace/AriteruGameEngine/shaders/model_loading.fs");
+#endif
+
+	Shader planeShader("D:/Workspace/AriteruGameEngine/shaders/plane.vs");
+	Shader skyBoxShader("D:/Workspace/AriteruGameEngine/shaders/skybox.fs");
 
  
 
@@ -129,14 +165,7 @@ int main()
 void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	{
 		glfwSetWindowShouldClose(window, true);
-	}
-	else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-	{
-		showRight = !showRight;
-	}
-
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)

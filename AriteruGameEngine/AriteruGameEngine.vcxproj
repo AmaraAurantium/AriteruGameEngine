@@ -140,15 +140,19 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="private\camera.cpp" />
+    <ClCompile Include="private\light.cpp" />
     <ClCompile Include="private\mesh.cpp" />
     <ClCompile Include="private\model.cpp" />
     <ClCompile Include="private\shader.cpp" />
+    <ClCompile Include="private\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\camera.h" />
+    <ClInclude Include="public\light.h" />
     <ClInclude Include="public\mesh.h" />
     <ClInclude Include="public\model.h" />
     <ClInclude Include="public\shader.h" />
+    <ClInclude Include="public\utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

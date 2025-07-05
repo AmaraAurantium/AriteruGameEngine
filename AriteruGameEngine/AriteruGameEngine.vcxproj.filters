@@ -33,6 +33,12 @@
     <ClCompile Include="private\mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="private\light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="private\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="public\shader.h">
@@ -45,6 +51,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="public\mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="public\light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="public\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
