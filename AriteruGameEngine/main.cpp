@@ -40,8 +40,8 @@ void save_screen(int width, int height);
 Camera camera(glm::vec3(0.0f, 40.0f, 80.0f));
 
 glm::vec3 lightColor(1.0f);
-glm::vec3 lightPosition(20.0f, 20.0f, -55.0f);
-Light sun(lightPosition, glm::vec3(0), 10.0f, 500.0f, lightColor, ELightType::LT_DIRECTION, SHADOW_WIDTH, SHADOW_HEIGHT);
+glm::vec3 lightPosition(500.0f, 500.0f, -300.0f);
+Light sun(lightPosition, glm::vec3(0), 10.0f, 200.0f, lightColor, ELightType::LT_DIRECTION, SHADOW_WIDTH, SHADOW_HEIGHT);
 
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
@@ -89,11 +89,11 @@ int main()
 
 	//Shader shader("D:/Workspace/AriteruGameEngine/shaders/vertex.vs", "D:/Workspace/AriteruGameEngine/shaders/frag.fs");
 
-	Model customModel("D:/Workspace/AriteruGameEngine/models/ara/ara.fbx");
+	Model customModel("D:/Workspace/AriteruGameEngine/models/house/house.fbx");
 
 	Shader skyBoxShader("D:/Workspace/AriteruGameEngine/shaders/skybox.vs", "D:/Workspace/AriteruGameEngine/shaders/skybox.fs");
 	Shader planeShader("D:/Workspace/AriteruGameEngine/shaders/plane.vs", "D:/Workspace/AriteruGameEngine/shaders/plane.fs");
-	Shader shader("D:/Workspace/AriteruGameEngine/shaders/shadow_mapping.vs","D:/Workspace/AriteruGameEngine/shaders/shadow_mapping.fs");
+	Shader shader("D:/Workspace/AriteruGameEngine/shaders/shadow_mapping.vs", "D:/Workspace/AriteruGameEngine/shaders/shadow_mapping.fs");
 
 	glEnable(GL_DEPTH_TEST);
 	// Set matrices
@@ -172,7 +172,7 @@ int main()
 	skyBoxShader.use();
 	skyBoxShader.setInt("skybox", 0);
 
-	Shader shadowMapShader("D:/Workspace/AriteruGameEngine/shaders/shadow_mapping_depth.vs","D:/Workspace/AriteruGameEngine/shaders/shadow_mapping_depth.fs");
+	Shader shadowMapShader("D:/Workspace/AriteruGameEngine/shaders/shadow_mapping_depth.vs", "D:/Workspace/AriteruGameEngine/shaders/shadow_mapping_depth.fs");
 
 	unsigned int shadowMapFBO, shadowTexture;
 	sun.CreateShadowBuffer(shadowMapFBO, shadowTexture);
@@ -236,9 +236,9 @@ int main()
 
 		// Render model
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 25.0f, 0.0f));
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
 		modelMatrix = glm::rotate(modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(100.0f));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(80.0f));
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -256,24 +256,17 @@ int main()
 		shadowMapShader.setMat4("model", modelMatrix);
 		customModel.Draw(shadowMapShader);
 
-		shadowMapShader.setMat4("model", glm::mat4(1.0));
+		glm::mat4 planeModelMatrix = glm::mat4(1.0f);
+		planeModelMatrix = glm::translate(planeModelMatrix, glm::vec3(0.0f, -25.0f, 0.0f));
+		shadowMapShader.setMat4("model", planeModelMatrix);
 		glBindVertexArray(planeVAO);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glBindVertexArray(0);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-
-
 		//render loop subpart 2
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-		glUseProgram(shader.GetShaderProgramID());
-
-		glm::mat4 view = camera.GetViewMatrix();
-		unsigned int viewLoc = glGetUniformLocation(shader.GetShaderProgramID(), "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader.use();  // Activate shader
@@ -287,10 +280,13 @@ int main()
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, shadowTexture);
 
-
-
-
 		customModel.Draw(shader);
+
+		/*shader.setMat4("model", planeModelMatrix);
+		glBindVertexArray(planeVAO);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glBindVertexArray(0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);*/
 
 		glDepthFunc(GL_LEQUAL);
 		skyBoxShader.use();
