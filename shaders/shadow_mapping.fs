@@ -79,8 +79,8 @@ void main()
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;
 
     //FragColor = vec4(ambient, 1.0) + (1 - shadow) * vec4(1.0, 1.0, 1.0, 1.0);
-    FragColor = vec4(lighting, 1.0);
+    //FragColor = vec4(lighting, 1.0);
     shadow = 1.0 - shadow;
-    //FragColor = vec4(shadow, shadow, shadow, 1.0);
+    FragColor = vec4(shadow, shadow, shadow, 1.0);
     //shadow = 1.0 - shadow;
 }

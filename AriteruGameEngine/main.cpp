@@ -1,7 +1,3 @@
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#endif
- 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -45,7 +41,7 @@ Camera camera(glm::vec3(0.0f, 40.0f, 80.0f));
 
 glm::vec3 lightColor(1.0f);
 glm::vec3 lightPosition(20.0f, 20.0f, -55.0f);
-Light sun(lightPosition, glm::vec3(0), 10.0f, 100.0f, lightColor, ELightType::LT_DIRECTION, SHADOW_WIDTH, SHADOW_HEIGHT);
+Light sun(lightPosition, glm::vec3(0), 10.0f, 500.0f, lightColor, ELightType::LT_DIRECTION, SHADOW_WIDTH, SHADOW_HEIGHT);
 
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
@@ -91,20 +87,13 @@ int main()
 		return -1;
 	}
 
-	Shader shader("D:/Workspace/AriteruGameEngine/shaders/vertex.vs", "D:/Workspace/AriteruGameEngine/shaders/frag.fs");
+	//Shader shader("D:/Workspace/AriteruGameEngine/shaders/vertex.vs", "D:/Workspace/AriteruGameEngine/shaders/frag.fs");
 
-	Model model("D:/Workspace/AriteruGameEngine/models/ara/ara.fbx");
+	Model customModel("D:/Workspace/AriteruGameEngine/models/ara/ara.fbx");
 
-#ifdef SHADOW_MAPPING_ENABLE
-	Shader shader("D:/Workspace/AriteruGameEngine/shaders/shadow_mapping.fs");
-#else
-	Shader shader("D:/Workspace/AriteruGameEngine/shaders/model_loading.fs");
-#endif
-
-	Shader planeShader("D:/Workspace/AriteruGameEngine/shaders/plane.vs");
-	Shader skyBoxShader("D:/Workspace/AriteruGameEngine/shaders/skybox.fs");
-
- 
+	Shader skyBoxShader("D:/Workspace/AriteruGameEngine/shaders/skybox.vs", "D:/Workspace/AriteruGameEngine/shaders/skybox.fs");
+	Shader planeShader("D:/Workspace/AriteruGameEngine/shaders/plane.vs", "D:/Workspace/AriteruGameEngine/shaders/plane.fs");
+	Shader shader("D:/Workspace/AriteruGameEngine/shaders/shadow_mapping.vs","D:/Workspace/AriteruGameEngine/shaders/shadow_mapping.fs");
 
 	glEnable(GL_DEPTH_TEST);
 	// Set matrices
@@ -113,6 +102,121 @@ int main()
 	glm::mat4 view = camera.GetViewMatrix();
 	shader.setMat4("projection", projection);
 	shader.setMat4("view", view);
+
+	const float skyboxVertices[] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
+
+	unsigned int skyboxVAO, skyboxVBO;
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+	glBindVertexArray(skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	vector<std::string> faces
+	{
+		"D:/Workspace/AriteruGameEngine/textures/right.PNG",
+		"D:/Workspace/AriteruGameEngine/textures/left.PNG",
+		"D:/Workspace/AriteruGameEngine/textures/top.PNG",
+		"D:/Workspace/AriteruGameEngine/textures/bottom.PNG",
+		"D:/Workspace/AriteruGameEngine/textures/front.PNG",
+		"D:/Workspace/AriteruGameEngine/textures/back.PNG"
+	};
+
+	unsigned int skyBoxCubemapTexture = LoadCubemap(faces);
+
+	skyBoxShader.use();
+	skyBoxShader.setInt("skybox", 0);
+
+	Shader shadowMapShader("D:/Workspace/AriteruGameEngine/shaders/shadow_mapping_depth.vs","D:/Workspace/AriteruGameEngine/shaders/shadow_mapping_depth.fs");
+
+	unsigned int shadowMapFBO, shadowTexture;
+	sun.CreateShadowBuffer(shadowMapFBO, shadowTexture);
+
+	shadowMapShader.use();
+
+	shader.use();
+	shader.setInt("shadowMap", 3);
+
+	//plane VAO & VBO declaration and instantiation
+	unsigned int planeVAO = 0;
+	unsigned int planeVBO;
+
+	{
+		float planeVertices[] = {
+			// positions            // normal         // texCoords
+			-40.0f, 25.0f, 50.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,  //
+			-40.0f, 25.0f, -40.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, //
+			40.0f, 25.0f, 50.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,   //
+			40.0f, 25.0f, -40.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  //
+			//40.0f, -25.0f, 40.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  //
+			//-40.0f, -25.0f, 40.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 
+			//-40.0f, -25.0f, -40.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, //
+
+			//40.0f, -25.0f, 40.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   //
+			//-40.0f, -25.0f, -40.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,   //
+			//40.0f, -25.0f, -40.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,  //
+		};
+
+		glGenVertexArrays(1, &planeVAO);
+		glGenBuffers(1, &planeVBO);
+		glBindVertexArray(planeVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindVertexArray(0);
+	}
+
+	glEnable(GL_DEPTH_TEST);
 
 	// rendering loop
 	while (!glfwWindowShouldClose(window))
@@ -127,6 +231,40 @@ int main()
 		{
 			camera.ShowInfo();
 		}
+
+		//render loop subpart 1
+
+		// Render model
+		glm::mat4 modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 25.0f, 0.0f));
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(100.0f));
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, shadowMapFBO);
+		//glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowTexture);
+
+		shadowMapShader.use();
+		shadowMapShader.setMat4("lightSpaceMatrix", sun.GetLightSpaceMatrix()); // light space view projection matrix
+
+		shadowMapShader.setMat4("model", modelMatrix);
+		customModel.Draw(shadowMapShader);
+
+		shadowMapShader.setMat4("model", glm::mat4(1.0));
+		glBindVertexArray(planeVAO);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glBindVertexArray(0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+
+
+		//render loop subpart 2
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -139,18 +277,33 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader.use();  // Activate shader
-
-
-		// Render model
-		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 25.0f, 0.0f));
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(100.0f));
-
-
 		shader.setMat4("model", modelMatrix);
+		shader.setMat4("view", camera.GetViewMatrix());
+		shader.setVec3("viewPos", camera.GetPosition());
+		shader.setVec3("lightPos", sun.GetLightPos());
+		shader.setVec3("lightColor", sun.GetLightColor());
+		shader.setMat4("lightSpaceMatrix", sun.GetLightSpaceMatrix());
+		shader.setInt("shadowMap", 3);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, shadowTexture);
 
-		model.Draw(shader);
+
+
+
+		customModel.Draw(shader);
+
+		glDepthFunc(GL_LEQUAL);
+		skyBoxShader.use();
+		view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+		skyBoxShader.setMat4("view", view);
+		skyBoxShader.setMat4("projection", projection);
+		// skybox cube
+		glBindVertexArray(skyboxVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxCubemapTexture);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LESS); // set depth function back to default
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
